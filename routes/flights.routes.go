@@ -71,7 +71,6 @@ func UpdateFlightHandler(w http.ResponseWriter, r *http.Request) {
     flight.Origin = updatedFlight.Origin
     flight.Destination = updatedFlight.Destination
     flight.Duration = updatedFlight.Duration
-    flight.Distance = updatedFlight.Distance
     flight.Price = updatedFlight.Price
 
     db.DB.Save(&flight)

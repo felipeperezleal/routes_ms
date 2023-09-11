@@ -13,16 +13,14 @@ type Flight struct {
 	Origin      string
 	Destination string
 	Duration    int
-	Distance    float64
 	Price       float64
 }
 
-func NewFlight(origin, destination string, duration int, distance, price float64) *Flight {
+func NewFlight(origin, destination string, duration int, price float64) *Flight {
 	return &Flight{
 		Origin:      origin,
 		Destination: destination,
 		Duration:    duration,
-		Distance:    distance,
 		Price:       price,
 	}
 }

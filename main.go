@@ -43,12 +43,12 @@ func Example() {
 	nodes := 6
 	graph := src.NewRoute(nodes)
 
-	graph.AddEdge(5, 2, src.NewFlight("Minnesota", "San Francisco", 100, 600, 100))
-	graph.AddEdge(5, 0, src.NewFlight("Minnesota", "Las Vegas", 50, 300, 50))
-	graph.AddEdge(4, 0, src.NewFlight("New York", "Las Vegas", 200, 1200, 200))
-	graph.AddEdge(4, 1, src.NewFlight("New York", "Seattle", 300, 1500, 300))
-	graph.AddEdge(3, 1, src.NewFlight("Los Ángeles", "Seattle", 400, 2400, 400))
-	graph.AddEdge(2, 3, src.NewFlight("San Francisco", "Los Ángeles", 400, 2400, 400))
+	graph.AddEdge(5, 2, src.NewFlight("Minnesota", "San Francisco", 100, 100))
+	graph.AddEdge(5, 0, src.NewFlight("Minnesota", "Las Vegas", 50, 50))
+	graph.AddEdge(4, 0, src.NewFlight("New York", "Las Vegas", 200, 200))
+	graph.AddEdge(4, 1, src.NewFlight("New York", "Seattle", 300, 300))
+	graph.AddEdge(3, 1, src.NewFlight("Los Ángeles", "Seattle", 400, 400))
+	graph.AddEdge(2, 3, src.NewFlight("San Francisco", "Los Ángeles", 400,400))
 	topoSort := graph.TopoSort()
 	fmt.Println(topoSort)
 }
