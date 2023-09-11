@@ -1,5 +1,14 @@
 package src
 
+import (
+	"fmt"
+
+	"github.com/felipeperezleal/routes_ms/db"
+	"github.com/felipeperezleal/routes_ms/models"
+)
+
+var route models.Routes
+
 type Flight struct {
 	Origin      string
 	Destination string
@@ -18,26 +27,33 @@ func NewFlight(origin, destination string, duration int, distance, price float64
 	}
 }
 
-type RoutesGraph struct {
+type Route struct {
 	numNodes int
 	adjList  [][]int
 	flights  []*Flight
+	ordering []int
 }
 
-func NewRoutesGraph(numNodes int) *RoutesGraph {
-	return &RoutesGraph{
+func NewRoute(numNodes int) *Route {
+	db.DBConnection()
+	route = models.Routes{
+		NumNodes: numNodes,
+	}
+	db.DB.Create(&route)
+	return &Route{
 		numNodes: numNodes,
 		adjList:  make([][]int, numNodes),
 		flights:  make([]*Flight, 0),
+		ordering: make([]int, 0),
 	}
 }
 
-func (g *RoutesGraph) AddEdge(from, to int, flight *Flight) {
+func (g *Route) AddEdge(from, to int, flight *Flight) {
 	g.adjList[from] = append(g.adjList[from], to)
 	g.flights = append(g.flights, flight)
 }
 
-func (g *RoutesGraph) TopoSort() []int {
+func (g *Route) TopoSort() []int {
 	inDegree := make([]int, g.numNodes)
 	for _, neighbors := range g.adjList {
 		for _, neighbor := range neighbors {
@@ -65,6 +81,9 @@ func (g *RoutesGraph) TopoSort() []int {
 			}
 		}
 	}
+
+	g.ordering = topo
+	db.DB.Model(&route).Update("ordering", fmt.Sprint(topo))
 
 	return topo
 }

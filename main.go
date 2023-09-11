@@ -16,16 +16,23 @@ func main() {
 	db.DBConnection()
 
 	db.DB.AutoMigrate(models.Flight{})
-	db.DB.AutoMigrate(models.RouteGraph{})
+	db.DB.AutoMigrate(models.Routes{})
 
 	r := mux.NewRouter()
 
 	r.HandleFunc("/", routes.HomeHandler)
 
 	r.HandleFunc("/flights", routes.GetFlightsHandler).Methods("GET")
-	r.HandleFunc("/flights", routes.GetFlightsHandler).Methods("POST")
-	r.HandleFunc("/flights/{id}", routes.PostFlightHandler).Methods("GET")
+	r.HandleFunc("/flights", routes.PostFlightHandler).Methods("POST")
+	r.HandleFunc("/flights/{id}", routes.UpdateFlightHandler).Methods("PUT")
+	r.HandleFunc("/flights/{id}", routes.GetFlightHandler).Methods("GET")
 	r.HandleFunc("/flights/{id}", routes.DeleteFlightHandler).Methods("DELETE")
+
+	r.HandleFunc("/routes", routes.GetRoutesHandler).Methods("GET")
+	r.HandleFunc("/routes", routes.PostRouteHandler).Methods("POST")
+	r.HandleFunc("/flights/{id}", routes.UpdateRouteHandler).Methods("PUT")
+	r.HandleFunc("/routes/{id}", routes.GetRouteHandler).Methods("GET")
+	r.HandleFunc("/routes/{id}", routes.DeleteRoutesHandler).Methods("DELETE")
 
 	http.ListenAndServe(":3000", r)
 
@@ -33,14 +40,15 @@ func main() {
 }
 
 func Example() {
-	graph := src.NewRoutesGraph(6)
+	nodes := 6
+	graph := src.NewRoute(nodes)
+
 	graph.AddEdge(5, 2, src.NewFlight("Minnesota", "San Francisco", 100, 600, 100))
 	graph.AddEdge(5, 0, src.NewFlight("Minnesota", "Las Vegas", 50, 300, 50))
 	graph.AddEdge(4, 0, src.NewFlight("New York", "Las Vegas", 200, 1200, 200))
 	graph.AddEdge(4, 1, src.NewFlight("New York", "Seattle", 300, 1500, 300))
 	graph.AddEdge(3, 1, src.NewFlight("Los Ángeles", "Seattle", 400, 2400, 400))
 	graph.AddEdge(2, 3, src.NewFlight("San Francisco", "Los Ángeles", 400, 2400, 400))
-
 	topoSort := graph.TopoSort()
 	fmt.Println(topoSort)
 }
