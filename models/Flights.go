@@ -5,10 +5,10 @@ import "gorm.io/gorm"
 type Flight struct {
 	gorm.Model
 
-	Id          uint    `gorm:"primaryKey"`
-	Origin      string  `gorm:"size:255 not null"`
-	Destination string  `gorm:"size:255 not null"`
-	Duration    int     `gorm:"not null"`
-	Distance    float32 `gorm:"not null"`
-	Price       float32 `gorm:"not null"`
+	ID          int     `gorm:"primaryKey" json:"id" db:"id"`
+	Origin      string  `json:"origin" db:"origin"`
+	Destination string  `json:"destination" db:"destination"`
+	Duration    int     `json:"duration" db:"duration"`
+	Distance    float64 `json:"distance" db:"distance"`
+	Price       float64 `json:"price" db:"price"`
 }

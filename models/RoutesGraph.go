@@ -4,6 +4,6 @@ import "gorm.io/gorm"
 
 type RouteGraph struct {
 	gorm.Model
-	Id       uint `gorm:"primaryKey"`
-	NumNodes uint `gorm:"not null"`
+	ID       int `gorm:"primaryKey" json:"id" db:"id"`
+	NumNodes int `json:"numNodes" db:"numNodes"`
 }

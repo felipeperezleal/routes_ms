@@ -22,8 +22,17 @@ func main() {
 
 	r.HandleFunc("/", routes.HomeHandler)
 
+	r.HandleFunc("/flights", routes.GetFlightsHandler).Methods("GET")
+	r.HandleFunc("/flights", routes.GetFlightsHandler).Methods("POST")
+	r.HandleFunc("/flights/{id}", routes.PostFlightHandler).Methods("GET")
+	r.HandleFunc("/flights/{id}", routes.DeleteFlightHandler).Methods("DELETE")
+
 	http.ListenAndServe(":3000", r)
 
+	Example()
+}
+
+func Example() {
 	graph := src.NewRoutesGraph(6)
 	graph.AddEdge(5, 2, src.NewFlight("Minnesota", "San Francisco", 100, 600, 100))
 	graph.AddEdge(5, 0, src.NewFlight("Minnesota", "Las Vegas", 50, 300, 50))
