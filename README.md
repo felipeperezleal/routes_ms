@@ -39,11 +39,19 @@ Asegúrate de tener instalado Go y PostgreSQL en tu sistema.
 
 ## Pasos para Ejecutar el Programa
 
-1. Clona este repositorio en tu ordenador: git clone https://github.com/felipeperezleal/routes_ms.git
-2. Accede al directorio del proyecto: cd ../../routes_ms
-3. Instala las dependencias utilizando `go get`: go get -u 
-
-
+1. Clona este repositorio:
+   ```cmd
+    git clone https://github.com/felipeperezleal/routes_ms.git
+   ```
+2. Accede al directorio routes_ms: 
+   ```cmd
+    cd routes_ms
+   ```
+3. Instala las dependencias utilizando `go get`:
+   ```cmd
+    go get -u
+   ```
+   
 ## Endpoints del API
 
 - `GET /flights`: Obtiene la lista de todos los vuelos.
