@@ -51,7 +51,7 @@ Asegúrate de tener instalado Go y PostgreSQL en tu sistema.
    ```cmd
     docker build -t routes-ms .
    ```
-4. Ejecutar los contenedores de Docker:
+4. Ejecutar el contenedor de Docker:
    ```cmd
     docker run --name routesms -p 8080:8080 routes-ms
    ```
