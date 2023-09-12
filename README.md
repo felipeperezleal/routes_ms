@@ -54,7 +54,10 @@ Asegúrate de tener instalado Go y PostgreSQL en tu sistema.
 4. Ejecutar los contenedores de Docker:
    ```cmd
     docker run --name some-postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=mysecretpassword -p 5432:5432
-    docker run --name routesms -p 8080:5432 routes-ms
+   ```
+
+   ```cmd
+    docker run --name routesms -p 8080:8080 routes-ms
    ```
    
 ## Endpoints del API
