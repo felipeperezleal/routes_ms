@@ -23,7 +23,7 @@ El modelo `Routes` representa un grafo de rutas y almacena el resultado del algo
 - `NumNodes`: Número de nodos en el grafo.
 - `Ordering`: Ordenamiento topológico de los nodos del grafo.
 
-## Cómo Funciona
+## Cómo funciona
 
 El microservicio funciona de la siguiente manera:
 
@@ -33,9 +33,9 @@ El microservicio funciona de la siguiente manera:
 
 3. Almacena los datos en una base de datos de PostgreSQL.
 
-## Requisitos Previos
+## Requisitos previos
 
-Asegúrate de tener instalado Go y PostgreSQL en tu sistema.
+Asegúrate de tener instalado Docker, Go y PostgreSQL en tu sistema.
 
 ## Pasos para Ejecutar el Programa
 
