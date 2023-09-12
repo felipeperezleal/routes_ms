@@ -47,9 +47,14 @@ Asegúrate de tener instalado Go y PostgreSQL en tu sistema.
    ```cmd
     cd routes_ms
    ```
-3. Instala las dependencias utilizando `go get`:
+3. Construye la imagen Docker del microservicio:
    ```cmd
-    go get -u
+    docker build -t routes-ms .
+   ```
+4. Ejecutar los contenedores de Docker:
+   ```cmd
+    docker run --name some-postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=mysecretpassword -p 5432:5432
+    docker run --name routesms -p 8080:5432 routes-ms
    ```
    
 ## Endpoints del API
