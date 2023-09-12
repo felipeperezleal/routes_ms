@@ -37,7 +37,7 @@ El microservicio funciona de la siguiente manera:
 
 Asegúrate de tener instalado Docker, Go y PostgreSQL en tu sistema.
 
-## Pasos para Ejecutar el Programa
+## Pasos para ejecutar el programa
 
 1. Clona este repositorio:
    ```cmd
