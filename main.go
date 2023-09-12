@@ -34,7 +34,7 @@ func main() {
 	r.HandleFunc("/routes/{id}", routes.GetRouteHandler).Methods("GET")
 	r.HandleFunc("/routes/{id}", routes.DeleteRoutesHandler).Methods("DELETE")
 
-	http.ListenAndServe(":3000", r)
+	http.ListenAndServe(":8080", r)
 
 	Example()
 }
