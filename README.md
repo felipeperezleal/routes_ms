@@ -67,7 +67,6 @@ Asegúrate de tener instalado Docker, Go y PostgreSQL en tu sistema.
    ```cmd
     docker run --name routesms -p 8080:8080 routes-ms
    ```
-https://hub.docker.com/_/postgres
    
 ## Endpoints del API
 
