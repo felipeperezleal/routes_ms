@@ -43,15 +43,27 @@ Asegúrate de tener instalado Docker, Go y PostgreSQL en tu sistema.
    ```cmd
     git clone https://github.com/felipeperezleal/routes_ms.git
    ```
-2. Accede al directorio routes_ms: 
+2. Accede al directorio routes_ms/db: 
    ```cmd
-    cd routes_ms
+    cd routes_ms/db
    ```
-3. Construye la imagen Docker del microservicio:
+3. Construye la imagen Docker de la base de datos:
+   ```cmd
+    docker build -t routes-db .
+   ```
+4. Ejecutar el contenedor de Docker de la base de datos:
+   ```cmd
+    docker run --name routes-db -e POSTGRES_PASSWORD=mysecretpassword -p 5432:5432   
+   ```
+5. Vuelve al directorio routes_ms: 
+   ```cmd
+    cd ..
+   ```
+6. Construye la imagen Docker del microservicio:
    ```cmd
     docker build -t routes-ms .
    ```
-4. Ejecutar el contenedor de Docker:
+7. Ejecutar el contenedor de Docker del microservicio:
    ```cmd
     docker run --name routesms -p 8080:8080 routes-ms
    ```
