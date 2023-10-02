@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/felipeperezleal/routes_ms/db"
@@ -9,6 +10,7 @@ import (
 	"github.com/felipeperezleal/routes_ms/routes"
 	"github.com/felipeperezleal/routes_ms/src"
 	"github.com/gorilla/mux"
+	"github.com/streadway/amqp"
 )
 
 func main() {
@@ -18,6 +20,15 @@ func main() {
 	db.DB.AutoMigrate(models.Flight{})
 	db.DB.AutoMigrate(models.Routes{})
 
+	startServer()
+
+	message := "Buscando la mejor ruta, por favor espere"
+	publishToRabbitMQ(message)
+
+	Example()
+}
+
+func startServer() {
 	r := mux.NewRouter()
 
 	r.HandleFunc("/", routes.HomeHandler)
@@ -35,8 +46,6 @@ func main() {
 	r.HandleFunc("/routes/{id}", routes.DeleteRoutesHandler).Methods("DELETE")
 
 	http.ListenAndServe(":8080", r)
-
-	Example()
 }
 
 func Example() {
@@ -48,7 +57,37 @@ func Example() {
 	graph.AddEdge(4, 0, src.NewFlight("New York", "Las Vegas", 200, 200))
 	graph.AddEdge(4, 1, src.NewFlight("New York", "Seattle", 300, 300))
 	graph.AddEdge(3, 1, src.NewFlight("Los Ángeles", "Seattle", 400, 400))
-	graph.AddEdge(2, 3, src.NewFlight("San Francisco", "Los Ángeles", 400,400))
+	graph.AddEdge(2, 3, src.NewFlight("San Francisco", "Los Ángeles", 400, 400))
 	topoSort := graph.TopoSort()
 	fmt.Println(topoSort)
+}
+
+func publishToRabbitMQ(message string) {
+	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer conn.Close()
+
+	ch, err := conn.Channel()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer ch.Close()
+
+	queueName := "tripster_queue"
+
+	err = ch.Publish(
+		"",        // exchange
+		queueName, // routing key
+		false,     // mandatory
+		false,     // immediate
+		amqp.Publishing{
+			ContentType: "text/plain",
+			Body:        []byte(message),
+		})
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Printf("Mensaje enviado a RabbitMQ: %s", message)
 }
