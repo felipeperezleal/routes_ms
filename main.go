@@ -42,7 +42,7 @@ func startServer() {
 
 	r.HandleFunc("/routes", routes.GetRoutesHandler).Methods("GET")
 	r.HandleFunc("/routes", routes.PostRouteHandler).Methods("POST")
-	r.HandleFunc("/flights/{id}", routes.UpdateRouteHandler).Methods("PUT")
+	r.HandleFunc("/routes/{id}", routes.UpdateRouteHandler).Methods("PUT")
 	r.HandleFunc("/routes/{id}", routes.GetRouteHandler).Methods("GET")
 	r.HandleFunc("/routes/{id}", routes.DeleteRoutesHandler).Methods("DELETE")
 
