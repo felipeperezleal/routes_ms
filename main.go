@@ -20,10 +20,11 @@ func main() {
 	db.DB.AutoMigrate(models.Flight{})
 	db.DB.AutoMigrate(models.Routes{})
 
-	Example()
 	message := "Buscando la mejor ruta, por favor espere"
 	publishToRabbitMQ(message)
 	fmt.Println("Mensaje enviado a RabbitMQ: ", message)
+
+	example()
 
 	startServer()
 }
@@ -48,7 +49,7 @@ func startServer() {
 	http.ListenAndServe(":8080", r)
 }
 
-func Example() {
+func example() {
 	nodes := 6
 	graph := src.NewRoute(nodes)
 
@@ -63,7 +64,8 @@ func Example() {
 }
 
 func publishToRabbitMQ(message string) {
-	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+	conn, err := amqp.Dial("amqp://guest:guest@tripster-mq:5672/")
+
 	if err != nil {
 		log.Fatal(err)
 	}
