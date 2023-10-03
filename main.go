@@ -20,12 +20,12 @@ func main() {
 	db.DB.AutoMigrate(models.Flight{})
 	db.DB.AutoMigrate(models.Routes{})
 
-	startServer()
-
+	Example()
 	message := "Buscando la mejor ruta, por favor espere"
 	publishToRabbitMQ(message)
+	fmt.Println("Mensaje enviado a RabbitMQ: ", message)
 
-	Example()
+	startServer()
 }
 
 func startServer() {
