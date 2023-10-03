@@ -47,25 +47,29 @@ Asegúrate de tener instalado Docker, Go y PostgreSQL en tu sistema.
    ```cmd
     cd routes_ms/db
    ```
-3. Construye la imagen Docker de la base de datos:
+3. Crea una red de Docker:
+   ```cmd
+    docker network create routes-network
+   ```
+5. Construye la imagen Docker de la base de datos:
    ```cmd
     docker build -t routes-db .
    ```
-4. Ejecutar el contenedor de Docker de la base de datos:
+6. Ejecutar el contenedor de Docker de la base de datos:
    ```cmd
-    docker run --name routes-db -e POSTGRES_PASSWORD=mysecretpassword -p 5432:5432 routes-db  
+    docker run --network=routes-network --name routes-db -e POSTGRES_PASSWORD=mysecretpassword -p 5432:5432 routes-db  
    ```
-5. Vuelve al directorio routes_ms: 
+7. Vuelve al directorio routes_ms: 
    ```cmd
     cd ..
    ```
-6. Construye la imagen Docker del microservicio:
+8. Construye la imagen Docker del microservicio:
    ```cmd
     docker build -t routes-ms .
    ```
-7. Ejecutar el contenedor de Docker del microservicio:
+9. Ejecutar el contenedor de Docker del microservicio:
    ```cmd
-    docker run --name routes-ms -p 8080:8080 routes-ms
+    docker run --network=routes-network --name routes-ms -p 8080:8080 routes-ms
    ```
    
 ## Endpoints del API
