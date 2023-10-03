@@ -53,7 +53,7 @@ Asegúrate de tener instalado Docker, Go y PostgreSQL en tu sistema.
    ```
 4. Ejecutar el contenedor de Docker de la base de datos:
    ```cmd
-    docker run --name routes-db -e POSTGRES_PASSWORD=mysecretpassword -p 5432:5432   
+    docker run --name routes-db -e POSTGRES_PASSWORD=mysecretpassword -p 5432:5432 routes-db  
    ```
 5. Vuelve al directorio routes_ms: 
    ```cmd
