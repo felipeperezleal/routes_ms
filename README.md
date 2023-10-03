@@ -65,7 +65,7 @@ Asegúrate de tener instalado Docker, Go y PostgreSQL en tu sistema.
    ```
 7. Ejecutar el contenedor de Docker del microservicio:
    ```cmd
-    docker run --name routesms -p 8080:8080 routes-ms
+    docker run --name routes-ms -p 8080:8080 routes-ms
    ```
    
 ## Endpoints del API
