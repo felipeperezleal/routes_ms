@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -16,16 +17,13 @@ import (
 func main() {
 
 	db.DBConnection()
-
-	db.DB.AutoMigrate(models.Flight{})
 	db.DB.AutoMigrate(models.Routes{})
 
 	message := "Buscando la mejor ruta, por favor espere"
 	publishToRabbitMQ(message)
 	fmt.Println("Mensaje enviado a RabbitMQ: ", message)
 
-	example()
-
+	startAlgorithm()
 	startServer()
 }
 
@@ -33,13 +31,6 @@ func startServer() {
 	r := mux.NewRouter()
 
 	r.HandleFunc("/", routes.HomeHandler)
-
-	r.HandleFunc("/flights", routes.GetFlightsHandler).Methods("GET")
-	r.HandleFunc("/flights", routes.PostFlightHandler).Methods("POST")
-	r.HandleFunc("/flights/{id}", routes.UpdateFlightHandler).Methods("PUT")
-	r.HandleFunc("/flights/{id}", routes.GetFlightHandler).Methods("GET")
-	r.HandleFunc("/flights/{id}", routes.DeleteFlightHandler).Methods("DELETE")
-
 	r.HandleFunc("/routes", routes.GetRoutesHandler).Methods("GET")
 	r.HandleFunc("/routes", routes.PostRouteHandler).Methods("POST")
 	r.HandleFunc("/routes/{id}", routes.UpdateRouteHandler).Methods("PUT")
@@ -49,18 +40,28 @@ func startServer() {
 	http.ListenAndServe(":8080", r)
 }
 
-func example() {
-	nodes := 6
-	graph := src.NewRoute(nodes)
+func startAlgorithm() {
+	flightsData, err := src.FetchFlights()
+	if err != nil {
+		log.Fatal("Error al obtener datos de vuelos:", err)
+	}
 
-	graph.AddEdge(5, 2, src.NewFlight("Minnesota", "San Francisco", 100, 100))
-	graph.AddEdge(5, 0, src.NewFlight("Minnesota", "Las Vegas", 50, 50))
-	graph.AddEdge(4, 0, src.NewFlight("New York", "Las Vegas", 200, 200))
-	graph.AddEdge(4, 1, src.NewFlight("New York", "Seattle", 300, 300))
-	graph.AddEdge(3, 1, src.NewFlight("Los Ángeles", "Seattle", 400, 400))
-	graph.AddEdge(2, 3, src.NewFlight("San Francisco", "Los Ángeles", 400, 400))
-	topoSort := graph.TopoSort()
-	fmt.Println(topoSort)
+	var flights []models.Flight
+	if err := json.Unmarshal(flightsData, &flights); err != nil {
+		fmt.Println("Error al deserializar datos de vuelos:", err)
+		return
+	}
+	fmt.Println("Datos de vuelos obtenidos:", flights)
+
+	nodes := len(flights)
+	route, dbRoute := src.NewRoute(nodes)
+
+	for i, flight := range flights {
+		route.AddEdge(i, i+1, &flight)
+	}
+
+	topoSort := route.TopoSort(dbRoute)
+	fmt.Println("Orden topológico:", topoSort)
 }
 
 func publishToRabbitMQ(message string) {

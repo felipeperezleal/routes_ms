@@ -7,17 +7,12 @@ import (
 	"github.com/felipeperezleal/routes_ms/models"
 )
 
-var route models.Routes
+func NewFlight(origin, destination string, duration int, price float64) *models.Flight {
+	if duration < 0 || price < 0 {
+		return nil
+	}
 
-type Flight struct {
-	Origin      string
-	Destination string
-	Duration    int
-	Price       float64
-}
-
-func NewFlight(origin, destination string, duration int, price float64) *Flight {
-	return &Flight{
+	return &models.Flight{
 		Origin:      origin,
 		Destination: destination,
 		Duration:    duration,
@@ -28,30 +23,34 @@ func NewFlight(origin, destination string, duration int, price float64) *Flight 
 type Route struct {
 	numNodes int
 	adjList  [][]int
-	flights  []*Flight
+	flights  []*models.Flight
 	ordering []int
 }
 
-func NewRoute(numNodes int) *Route {
+func NewRoute(numNodes int) (*Route, *models.Routes) {
 	db.DBConnection()
-	route = models.Routes{
+	route := models.Routes{
 		NumNodes: numNodes,
 	}
 	db.DB.Create(&route)
 	return &Route{
 		numNodes: numNodes,
 		adjList:  make([][]int, numNodes),
-		flights:  make([]*Flight, 0),
+		flights:  make([]*models.Flight, 0),
 		ordering: make([]int, 0),
-	}
+	}, &route
 }
 
-func (g *Route) AddEdge(from, to int, flight *Flight) {
+func (g *Route) AddEdge(from, to int, flight *models.Flight) {
+	if from < 0 || from >= g.numNodes || to < 0 || to >= g.numNodes {
+		return
+	}
+
 	g.adjList[from] = append(g.adjList[from], to)
 	g.flights = append(g.flights, flight)
 }
 
-func (g *Route) TopoSort() []int {
+func (g *Route) TopoSort(dbRoute *models.Routes) []int {
 	inDegree := make([]int, g.numNodes)
 	for _, neighbors := range g.adjList {
 		for _, neighbor := range neighbors {
@@ -80,8 +79,8 @@ func (g *Route) TopoSort() []int {
 		}
 	}
 
-	g.ordering = topo
-	db.DB.Model(&route).Update("ordering", fmt.Sprint(topo))
+	// Actualizar el orden en la base de datos.
+	db.DB.Model(dbRoute).Update("ordering", fmt.Sprint(topo))
 
 	return topo
 }
