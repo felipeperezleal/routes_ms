@@ -5,17 +5,7 @@ Este microservicio ayuda a encontrar las mejores escalas posibles para viajar de
 
 ## Modelos
 
-El microservicio utiliza dos modelos principales:
-
-### Flight
-
-El modelo `Flight` representa información sobre vuelos individuales. Contiene los siguientes atributos:
-
-- `Origin`: Ciudad de origen del vuelo.
-- `Destination`: Ciudad de destino del vuelo.
-- `Duration`: Duración del vuelo en minutos.
-- `Price`: Precio del vuelo en la moneda especificada.
-
+El microservicio utiliza un principal modelo:
 ### Routes (Toposort)
 
 El modelo `Routes` representa un grafo de rutas y almacena el resultado del algoritmo topológico (toposort) para determinar el orden de las escalas en una ruta óptima.
@@ -27,7 +17,7 @@ El modelo `Routes` representa un grafo de rutas y almacena el resultado del algo
 
 El microservicio funciona de la siguiente manera:
 
-1. Proporciona endpoints de API para crear, obtener, actualizar y eliminar vuelos (`Flight`) y gráficos de rutas (`Routes`).
+1. Proporciona endpoints de API para crear, obtener, actualizar y eliminar gráficos de rutas (`Routes`).
 
 2. Utiliza un toposort para calcular la mejor secuencia de escalas para viajar de un punto A a un punto B.
 
@@ -73,12 +63,6 @@ Asegúrate de tener instalado Docker, Go y PostgreSQL en tu sistema.
    ```
    
 ## Endpoints del API
-
-- `GET /flights`: Obtiene la lista de todos los vuelos.
-- `GET /flights/{id}`: Obtiene un vuelo por su ID.
-- `POST /flights`: Crea un nuevo vuelo.
-- `PUT /flights/{id}`: Actualiza un vuelo existente por su ID.
-- `DELETE /flights/{id}`: Elimina un vuelo por su ID.
 
 - `GET /routes`: Obtiene la lista de todos los gráficos de rutas.
 - `GET /routes/{id}`: Obtiene un gráfico de ruta por su ID.
