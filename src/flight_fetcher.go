@@ -2,7 +2,7 @@ package src
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 )
 
@@ -19,7 +19,7 @@ func FetchFlights() ([]byte, error) {
 		return nil, fmt.Errorf("error en la solicitud al API Gateway: %s", resp.Status)
 	}
 
-	data, err := ioutil.ReadAll(resp.Body)
+	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
