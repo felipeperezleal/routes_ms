@@ -1,15 +1,34 @@
 package src
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"net/http"
 )
 
 func FetchFlights() ([]byte, error) {
-	apiGatewayURL := "http://localhost:5000"
+	apiGatewayURL := "http://localhost:5000/graphiql"
 
-	resp, err := http.Get(apiGatewayURL)
+	query := `
+	{
+		flights {
+            Origin
+            Destination
+            Duration
+            Price
+		}
+	}
+	`
+
+	req, err := http.NewRequest("POST", apiGatewayURL, bytes.NewBuffer([]byte(query)))
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
