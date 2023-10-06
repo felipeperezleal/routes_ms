@@ -37,7 +37,7 @@ func startServer() {
 	r.HandleFunc("/routes/{id}", routes.GetRouteHandler).Methods("GET")
 	r.HandleFunc("/routes/{id}", routes.DeleteRoutesHandler).Methods("DELETE")
 
-	http.ListenAndServe(":6000", r)
+	http.ListenAndServe(":8081", r)
 }
 
 func startAlgorithm() {
