@@ -7,7 +7,7 @@ import (
 )
 
 func FetchFlights() ([]byte, error) {
-	apiGatewayURL := "http://localhost:4999/flight"
+	apiGatewayURL := "http://localhost:5000"
 
 	resp, err := http.Get(apiGatewayURL)
 	if err != nil {
