@@ -23,6 +23,6 @@ func (g *Graph) TopologicalSort(node string) {
 		for _, neighbor := range g.Edges[node] {
 			g.TopologicalSort(neighbor)
 		}
-		g.Sorted = append(g.Sorted, node)
+		g.Sorted = append([]string{node}, g.Sorted...)
 	}
 }

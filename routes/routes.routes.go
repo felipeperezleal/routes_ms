@@ -6,6 +6,7 @@ import (
 
 	"github.com/felipeperezleal/routes_ms/db"
 	"github.com/felipeperezleal/routes_ms/models"
+	"github.com/felipeperezleal/routes_ms/src/messaging"
 	"github.com/gorilla/mux"
 )
 
@@ -25,6 +26,9 @@ func PostRouteHandler(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 		return
 	}
+
+	messaging.ExecuteAlgorithm(route.Origin, route.Destiny)
+	messaging.PublishToRabbitMQ("Terminamos de calcular tu ruta!")
 
 	json.NewEncoder(w).Encode(&route)
 }
