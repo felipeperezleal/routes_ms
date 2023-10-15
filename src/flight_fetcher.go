@@ -1,13 +1,15 @@
 package src
 
 import (
+	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
+
+	"github.com/felipeperezleal/routes_ms/models"
 )
 
-func FetchFlights() ([]byte, error) {
-	apiGatewayURL := "http://localhost:5000/graphql?query={flights{Origin,Destination,Duration,Price}}"
+func FetchFlights() ([]models.FlightData, error) {
+	apiGatewayURL := "http://localhost:5000/graphql"
 
 	resp, err := http.Get(apiGatewayURL)
 	if err != nil {
@@ -19,10 +21,10 @@ func FetchFlights() ([]byte, error) {
 		return nil, fmt.Errorf("error en la solicitud al API Gateway: %s", resp.Status)
 	}
 
-	data, err := io.ReadAll(resp.Body)
-	if err != nil {
+	var responseData []models.FlightData
+	if err := json.NewDecoder(resp.Body).Decode(&responseData); err != nil {
 		return nil, err
 	}
 
-	return data, nil
+	return responseData, nil
 }

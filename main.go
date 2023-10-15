@@ -1,10 +1,10 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/felipeperezleal/routes_ms/db"
 	"github.com/felipeperezleal/routes_ms/models"
@@ -19,11 +19,7 @@ func main() {
 	db.DBConnection()
 	db.DB.AutoMigrate(models.Routes{})
 
-	message := "Buscando la mejor ruta, por favor espere"
-	publishToRabbitMQ(message)
-	fmt.Println("Mensaje enviado a RabbitMQ: ", message)
-
-	startAlgorithm()
+	startAlgorithm("A", "D")
 	startServer()
 }
 
@@ -40,28 +36,83 @@ func startServer() {
 	http.ListenAndServe(":8081", r)
 }
 
-func startAlgorithm() {
-	flightsData, err := src.FetchFlights()
-	if err != nil {
-		log.Fatal("Error al obtener datos de vuelos:", err)
+func startAlgorithm(origin, destiny string) {
+
+	// Uncomment for Fetching flights from flights_ms
+	// flightData, err := src.FetchFlights()
+	// if err != nil {
+	// 	log.Printf("Error al obtener los datos de vuelo desde el API: %v", err)
+	// 	return
+	// }
+
+	publishToRabbitMQ("Estamos calculando tu ruta...")
+
+	flightData := []models.FlightData{
+		{
+			AirportOriginName:    "A",
+			AirportDestinoName:   "B",
+			FlightDepartureTime:  time.Date(2023, 9, 16, 5, 12, 0, 0, time.UTC),
+			FlightArrivalTime:    time.Date(2023, 9, 16, 6, 47, 0, 0, time.UTC),
+			FlightAirline:        "Latam",
+			FlightSeatClass:      "Basic",
+			FlightEscalas:        []string{},
+			FlightAvailableSeats: 5,
+			FlightTicketPrice:    511004.0,
+		},
+		{
+			AirportOriginName:    "B",
+			AirportDestinoName:   "C",
+			FlightDepartureTime:  time.Date(2023, 9, 16, 5, 12, 0, 0, time.UTC),
+			FlightArrivalTime:    time.Date(2023, 9, 16, 6, 47, 0, 0, time.UTC),
+			FlightAirline:        "Latam",
+			FlightSeatClass:      "Basic",
+			FlightEscalas:        []string{},
+			FlightAvailableSeats: 5,
+			FlightTicketPrice:    345673.0,
+		},
+		{
+			AirportOriginName:    "C",
+			AirportDestinoName:   "D",
+			FlightDepartureTime:  time.Date(2023, 9, 16, 5, 12, 0, 0, time.UTC),
+			FlightArrivalTime:    time.Date(2023, 9, 16, 6, 47, 0, 0, time.UTC),
+			FlightAirline:        "Latam",
+			FlightSeatClass:      "Basic",
+			FlightEscalas:        []string{},
+			FlightAvailableSeats: 5,
+			FlightTicketPrice:    654345.0,
+		},
+		{
+			AirportOriginName:    "A",
+			AirportDestinoName:   "D",
+			FlightDepartureTime:  time.Date(2023, 9, 16, 5, 12, 0, 0, time.UTC),
+			FlightArrivalTime:    time.Date(2023, 9, 16, 6, 47, 0, 0, time.UTC),
+			FlightAirline:        "Latam",
+			FlightSeatClass:      "Basic",
+			FlightEscalas:        []string{},
+			FlightAvailableSeats: 5,
+			FlightTicketPrice:    234565.0,
+		},
 	}
 
-	var flights []models.Flight
-	if err := json.Unmarshal(flightsData, &flights); err != nil {
-		fmt.Println("Error al deserializar datos de vuelos:", err)
-		return
+	graph := src.NewGraph()
+
+	for _, flight := range flightData {
+		graph.AddRoute(flight.AirportOriginName, flight.AirportDestinoName)
 	}
-	fmt.Println("Datos de vuelos obtenidos:", flights)
+	graph.TopologicalSort(origin)
 
-	nodes := len(flights)
-	route, dbRoute := src.NewRoute(nodes)
-
-	for i, flight := range flights {
-		route.AddEdge(i, i+1, &flight)
+	route := models.Routes{
+		Origin:   origin,
+		Destiny:  destiny,
+		NumNodes: len(graph.Sorted),
+		Ordering: fmt.Sprintf("%v", graph.Sorted),
 	}
 
-	topoSort := route.TopoSort(dbRoute)
-	fmt.Println("Orden topológico:", topoSort)
+	if err := db.DB.Create(&route).Error; err != nil {
+		fmt.Printf("Error al crear el registro en la base de datos: %v\n", err)
+	}
+
+	publishToRabbitMQ("Terminamos de calcular tu ruta!")
 }
 
 func publishToRabbitMQ(message string) {
