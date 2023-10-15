@@ -64,11 +64,11 @@ Asegúrate de tener instalado Docker, Go y PostgreSQL en tu sistema.
    
 ## Endpoints del API
 
-- `GET /routes`: Obtiene la lista de todos los gráficos de rutas.
-- `GET /routes/{id}`: Obtiene un gráfico de ruta por su ID.
-- `POST /routes`: Crea un nuevo gráfico de ruta.
-- `PUT /routes/{id}`: Actualiza un gráfico de ruta existente por su ID.
-- `DELETE /routes/{id}`: Elimina un gráfico de ruta por su ID.
+- `GET /routes`: Obtiene la lista de todas las rutas.
+- `GET /routes/{id}`: Obtiene un la ruta identificada por su ID.
+- `POST /routes`: Crea una nueva ruta.
+- `PUT /routes/{id}`: Actualiza una ruta existente por su ID.
+- `DELETE /routes/{id}`: Elimina una ruta por su ID.
 
 
 
