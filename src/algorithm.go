@@ -1,28 +1,75 @@
 package src
 
 type Graph struct {
-	Edges   map[string][]string
-	Sorted  []string
-	Visited map[string]bool
+	V   int
+	adj map[string][]string
 }
 
-func NewGraph() *Graph {
+func NewGraph(v int) *Graph {
 	return &Graph{
-		Edges:   make(map[string][]string),
-		Visited: make(map[string]bool),
+		V:   v,
+		adj: make(map[string][]string),
 	}
 }
 
-func (g *Graph) AddRoute(origin, destiny string) {
-	g.Edges[origin] = append(g.Edges[origin], destiny)
+func (g *Graph) AddEdge(v, w string) {
+	g.adj[v] = append(g.adj[v], w)
 }
 
-func (g *Graph) TopologicalSort(node string) {
-	if !g.Visited[node] {
-		g.Visited[node] = true
-		for _, neighbor := range g.Edges[node] {
-			g.TopologicalSort(neighbor)
+func (g *Graph) TopologicalSort() []string {
+	visited := make(map[string]bool)
+	stack := make([]string, 0)
+
+	var topologicalSortUtil func(string)
+	topologicalSortUtil = func(v string) {
+		visited[v] = true
+		for _, neighbor := range g.adj[v] {
+			if !visited[neighbor] {
+				topologicalSortUtil(neighbor)
+			}
 		}
-		g.Sorted = append([]string{node}, g.Sorted...)
+		stack = append(stack, v)
 	}
+
+	for vertex := range g.adj {
+		if !visited[vertex] {
+			topologicalSortUtil(vertex)
+		}
+	}
+
+	reversed := make([]string, 0)
+	for i := len(stack) - 1; i >= 0; i-- {
+		reversed = append(reversed, stack[i])
+	}
+
+	return reversed
+}
+
+func FindRoute(arr []string, a string, b string) []string {
+	var routePath []string
+	startIndex, endIndex := -1, -1
+
+	for i, elem := range arr {
+		if elem == a || elem == b {
+			if startIndex == -1 {
+				startIndex = i
+			} else {
+				endIndex = i
+				break
+			}
+		}
+	}
+
+	if startIndex == -1 || endIndex == -1 {
+		return []string{}
+	}
+	if startIndex > endIndex {
+		startIndex, endIndex = endIndex, startIndex
+	}
+
+	for i := startIndex; i <= endIndex; i++ {
+		routePath = append(routePath, arr[i])
+	}
+
+	return routePath
 }
