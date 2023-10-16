@@ -27,7 +27,7 @@ func PostRouteHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	messaging.ExecuteAlgorithm(route.Origin, route.Destiny)
+	messaging.ExecuteAlgorithm(&route)
 	messaging.PublishToRabbitMQ("Terminamos de calcular tu ruta!")
 
 	json.NewEncoder(w).Encode(&route)

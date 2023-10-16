@@ -11,7 +11,7 @@ import (
 	"github.com/streadway/amqp"
 )
 
-func ExecuteAlgorithm(origin, destiny string) {
+func ExecuteAlgorithm(route *models.Routes) {
 
 	// Uncomment for Fetching flights from flights_ms
 	// flightData, err := src.FetchFlights()
@@ -19,6 +19,8 @@ func ExecuteAlgorithm(origin, destiny string) {
 	// 	log.Printf("Error al obtener los datos de vuelo desde el API: %v", err)
 	// 	return
 	// }
+
+	origin := route.Origin
 
 	PublishToRabbitMQ("Estamos calculando tu ruta...")
 
@@ -57,15 +59,37 @@ func ExecuteAlgorithm(origin, destiny string) {
 			FlightTicketPrice:    654345.0,
 		},
 		{
-			AirportOriginName:    "A",
-			AirportDestinoName:   "D",
+			AirportOriginName:    "D",
+			AirportDestinoName:   "E",
 			FlightDepartureTime:  time.Date(2023, 9, 16, 5, 12, 0, 0, time.UTC),
 			FlightArrivalTime:    time.Date(2023, 9, 16, 6, 47, 0, 0, time.UTC),
 			FlightAirline:        "Latam",
 			FlightSeatClass:      "Basic",
 			FlightEscalas:        []string{},
 			FlightAvailableSeats: 5,
-			FlightTicketPrice:    234565.0,
+			FlightTicketPrice:    80000.0,
+		},
+		{
+			AirportOriginName:    "B",
+			AirportDestinoName:   "E",
+			FlightDepartureTime:  time.Date(2023, 9, 16, 5, 12, 0, 0, time.UTC),
+			FlightArrivalTime:    time.Date(2023, 9, 16, 6, 47, 0, 0, time.UTC),
+			FlightAirline:        "Latam",
+			FlightSeatClass:      "Basic",
+			FlightEscalas:        []string{},
+			FlightAvailableSeats: 5,
+			FlightTicketPrice:    65000.0,
+		},
+		{
+			AirportOriginName:    "A",
+			AirportDestinoName:   "C",
+			FlightDepartureTime:  time.Date(2023, 9, 16, 5, 12, 0, 0, time.UTC),
+			FlightArrivalTime:    time.Date(2023, 9, 16, 6, 47, 0, 0, time.UTC),
+			FlightAirline:        "Latam",
+			FlightSeatClass:      "Basic",
+			FlightEscalas:        []string{},
+			FlightAvailableSeats: 5,
+			FlightTicketPrice:    45000.0,
 		},
 	}
 
@@ -76,16 +100,9 @@ func ExecuteAlgorithm(origin, destiny string) {
 	}
 	graph.TopologicalSort(origin)
 
-	route := models.Routes{
-		Origin:   origin,
-		Destiny:  destiny,
-		NumNodes: len(graph.Sorted),
-		Ordering: fmt.Sprintf("%v", graph.Sorted),
-	}
-
-	if err := db.DB.Create(&route).Error; err != nil {
-		fmt.Printf("Error al crear el registro en la base de datos: %v\n", err)
-	}
+	route.NumNodes = len(graph.Sorted)
+	route.Ordering = fmt.Sprintf("%v", graph.Sorted)
+	db.DB.Save(&route)
 }
 
 func PublishToRabbitMQ(message string) {
