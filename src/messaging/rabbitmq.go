@@ -14,7 +14,6 @@ import (
 func ExecuteAlgorithm(route *models.Routes) {
 
 	flightData, err := src.FetchFlights()
-	fmt.Printf("Datos de vuelo: %v\n", flightData)
 	if err != nil {
 		log.Printf("Error al obtener los datos de vuelo desde el API: %v", err)
 		return
@@ -33,6 +32,7 @@ func ExecuteAlgorithm(route *models.Routes) {
 
 	routePath := src.FindRoute(sorted, route.Origin, route.Destiny)
 	route.Ordering = fmt.Sprintf("[%s]", strings.Join(routePath, ", "))
+	route.NumNodes = len(routePath)
 
 	fmt.Printf("Ruta de %s a %s: %v\n", route.Origin, route.Destiny, route.Ordering)
 
