@@ -1,30 +1,38 @@
 package src
 
 import (
-	"encoding/json"
-	"fmt"
-	"net/http"
+	"context"
 
 	"github.com/felipeperezleal/routes_ms/models"
+	"github.com/machinebox/graphql"
 )
 
+type graphqlResponse struct {
+	Data struct {
+		GetFlights []models.FlightData `json:"getFlights"`
+	} `json:"data"`
+}
+
 func FetchFlights() ([]models.FlightData, error) {
-	apiGatewayURL := "http://localhost:5000/graphql"
+	client := graphql.NewClient("http://host.docker.internal:5000/graphql")
 
-	resp, err := http.Get(apiGatewayURL)
-	if err != nil {
+	req := graphql.NewRequest(`
+	query GetFLights{
+		getFlights{
+			airport_origin{
+				airport_origin_name
+			},
+			airport_destination{
+				airport_destino_name
+			}
+		}
+	}`)
+
+	ctx := context.Background()
+	var respData graphqlResponse
+	if err := client.Run(ctx, req, &respData); err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("error en la solicitud al API Gateway: %s", resp.Status)
-	}
-
-	var responseData []models.FlightData
-	if err := json.NewDecoder(resp.Body).Decode(&responseData); err != nil {
-		return nil, err
-	}
-
-	return responseData, nil
+	return respData.Data.GetFlights, nil
 }
