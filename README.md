@@ -25,7 +25,15 @@ El microservicio funciona de la siguiente manera:
 
 ## Requisitos previos
 
-Asegúrate de tener instalado Docker, Go y PostgreSQL en tu sistema.
+- Docker
+- Asegúrate de haber descargado las imágenes de docker anteriormente
+  ```cmd
+   docker pull felipeperezleal/routes_db
+  ```
+
+  ```cmd
+   docker pull felipeperezleal/routes_ms
+  ```
 
 ## Pasos para ejecutar el programa
 
@@ -33,33 +41,13 @@ Asegúrate de tener instalado Docker, Go y PostgreSQL en tu sistema.
    ```cmd
     git clone https://github.com/felipeperezleal/routes_ms.git
    ```
-2. Accede al directorio routes_ms/db: 
+2. Ejecutar el contenedor de Docker de la base de datos:
    ```cmd
-    cd routes_ms/db
+     docker run -p 5432:5432 felipeperezleal/routes_db 
    ```
-3. Crea una red de Docker:
+3. Ejecutar el contenedor de Docker del microservicio:
    ```cmd
-    docker network create routes-network
-   ```
-5. Construye la imagen Docker de la base de datos:
-   ```cmd
-    docker build -t routes-db .
-   ```
-6. Ejecutar el contenedor de Docker de la base de datos:
-   ```cmd
-    docker run --network=routes-network --name routes-db -e POSTGRES_PASSWORD=mysecretpassword -p 5432:5432 routes-db  
-   ```
-7. Vuelve al directorio routes_ms: 
-   ```cmd
-    cd ..
-   ```
-8. Construye la imagen Docker del microservicio:
-   ```cmd
-    docker build -t routes-ms .
-   ```
-9. Ejecutar el contenedor de Docker del microservicio:
-   ```cmd
-    docker run --network=routes-network --name routes-ms -p 8081:8081 routes-ms
+    docker run -p 8081:8081 felipeperezleal/routes_ms
    ```
    
 ## Endpoints del API
