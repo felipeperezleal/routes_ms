@@ -41,7 +41,7 @@ func ExecuteAlgorithm(route *models.Routes) {
 }
 
 func PublishToRabbitMQ(message string) {
-	conn, err := amqp.Dial("amqp://guest:guest@tripster-mq:5672/")
+	conn, err := amqp.Dial("amqp://guest:guest@host.docker.internal:5672/")
 
 	if err != nil {
 		log.Fatal(err)
