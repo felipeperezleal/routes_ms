@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  tripster_mq:
+    image: felipeperezleal/tripster_mq
+    ports:
+      - "5672:5672"
+
+  routes_ms:
+    image: felipeperezleal/routes_ms
+    ports:
+      - "8081:8081"
+
+  routes_db:
+    image: felipeperezleal/routes_db
+    ports:
+      - "5432:5432"
